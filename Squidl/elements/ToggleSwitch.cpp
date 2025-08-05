@@ -3,22 +3,28 @@
 #include <Squidl/core/UIEvent.h>
 #include <Squidl/elements/ToggleSwitch.h>
 #include <Squidl/utils/UIRect.h>
+#include <Squidl/utils/Logger.h>
 
 namespace Squidl::Elements {
 
     ToggleSwitch::ToggleSwitch(int x, int y, int w, int h, bool isOn)
-        : mIsOn(isOn){
+        : mIsOn(isOn) {
         setRect({x, y, w, h});
-        bgColor = Squidl::Utils::Color(22, 43, 56, 120);
+        bgColor = Squidl::Utils::Color(22, 43, 56, 100);
+        mOnColor = Squidl::Utils::Color(0, 150, 136, 255);
+        mOffColor =
+            Squidl::Utils::Color(158, 158, 158, 255);
+        mKnobColor =
+            Squidl::Utils::Color(200, 200, 200, 255);
         setBorderless(true); // No border by default
     }
 
     bool ToggleSwitch::update(Squidl::Core::UIContext &ctx,
                               Squidl::Core::IRenderer &renderer) {
-        updateBackdrop(ctx, renderer);
+         updateBackdrop(ctx, renderer);
 
         // Calculate knob position and size
-        Squidl::Utils::UIRect rect = getRect();
+        //   Squidl::Utils::UIRect rect = getRect();
         int knobSize =
             rect.h - 4; // Knob is slightly smaller than the switch height
         int knobX;
@@ -32,11 +38,13 @@ namespace Squidl::Elements {
         // Draw the knob
         Squidl::Utils::UIRect knobRect = {knobX, rect.y + 2, knobSize,
                                           knobSize};
-        renderer.fillRoundedRect(knobRect, knobRect.w/2, mKnobColor);
-        renderer.drawRoundedRect(knobRect, knobRect.w / 2,
-                                 mKnobColor.darker(0.5f));
 
-        return true;
+         renderer.fillRoundedRect(knobRect, knobRect.w / 2, Squidl::Utils::Color(200,200,200,255));
+         renderer.drawRoundedRect(knobRect, knobRect.w / 2,
+                                  Squidl::Utils::Color(100,100,100,100));
+                                  //mKnobColor.lighter(0.5f));
+
+         return true;
     }
 
     void ToggleSwitch::onEvent(Squidl::Core::UIEvent &event) {
@@ -68,17 +76,20 @@ namespace Squidl::Elements {
         Squidl::Utils::UIRect rect = getRect();
 
         // Draw the switch background
-        //Squidl::Utils::Color bgColor = mIsOn ? mOnColor : mOffColor;
+        // Squidl::Utils::Color bgColor = mIsOn ? mOnColor : mOffColor;
 
         // Draw with rounded corners for a switch-like appearance
-        renderer.fillRoundedRect(rect, rect.h / 2, bgColor);
-        //renderer.drawRoundedRect(rect, rect.h / 2, bgColor.darker(0.3f));
+
+        if(mIsOn)renderer.fillRoundedRect(rect, rect.h / 2, bgColor);
+        else
+            renderer.fillRoundedRect(rect, rect.h / 2, Squidl::Utils::Color(0,120,0,100));
+        renderer.drawRoundedRect(rect, rect.h / 2, bgColor.lighter(0.7f));
     }
 
     void ToggleSwitch::setState(bool isOn) {
         if (mIsOn != isOn) {
             mIsOn = isOn;
-            //setBackgroundColor(mIsOn ? mOnColor : mOffColor);
+            // setBackgroundColor(mIsOn ? mOnColor : mOffColor);
 
             // Call the callback if it exists
             if (onStateChange) {
@@ -90,7 +101,7 @@ namespace Squidl::Elements {
     bool ToggleSwitch::getState() const { return mIsOn; }
 
     void ToggleSwitch::setKnobColor(Squidl::Utils::Color color) {
-        mKnobColor = color;
+        // mKnobColor = color;
     }
 
     void ToggleSwitch::autosize() {

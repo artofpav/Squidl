@@ -147,6 +147,10 @@ namespace Squidl::Base {
             // элементом, оно может быть передано дальше.
         }
 
+        // ---------------- Paddings ------------------
+        Squidl::Core::Padding padding = 5;
+        Squidl::Core::Padding margin = 0;
+
       protected:
         // Renderer now accepts IRenderer&
         virtual void updateBackdrop(Squidl::Core::UIContext &ctx,
@@ -169,8 +173,7 @@ namespace Squidl::Base {
         float borderOpacity = 1.0f;
         bool borderless = false;
 
-        // ---------------- Paddings ------------------
-        Squidl::Core::Padding padding = 5;
+
 
         // -----Parent/Childs Controlable -------------
         bool managedByLayout = false;

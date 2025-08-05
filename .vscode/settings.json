@@ -52,6 +52,11 @@
     "vector": "cpp",
     "algorithm": "cpp",
     "__config": "cpp",
-    "functional": "cpp"
+    "functional": "cpp",
+    "__tree": "cpp",
+    "charconv": "cpp",
+    "forward_list": "cpp",
+    "iomanip": "cpp",
+    "map": "cpp"
   }
 }

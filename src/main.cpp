@@ -90,12 +90,13 @@ int main() {
     auto vTestLayout = std::make_shared<VBoxLayout>();
     vTestLayout->autosize();
     vTestLayout->setBackgroundColor(
-        Color(30, 35, 50, 255)); // Slightly lighter background
+        Color(30, 35, 50, 10)); // Slightly lighter background
     vTestLayout->setBorderless(true);
-    vTestLayout->setPadding(0);
+    vTestLayout->setPadding(5);
     vTestLayout->setSpacing(1);
     vTestLayout->setOpacity(1);
-    vTestLayout->setManagedByChilds(false);
+    vTestLayout->setManagedByChilds(true);
+    vTestLayout->setRect({50, 50, w - 200, 300});
     vTestLayout->setHorizontalAlign(Squidl::Core::HorizontalAlign::Left);
     auto label1 =
         std::make_shared<Label>(u8"  Вертикальный Макет", 0, 0, 300, 50, font);
@@ -133,30 +134,11 @@ int main() {
     };
     vTestLayout->add(button2);
     mainLayout->add(vTestLayout);
-    /*
-    // --- Test 4: Toggle Switch ---
-    auto toggleLayout = std::make_shared<VBoxLayout>();
-    toggleLayout->setManagedByChilds(true);
-    toggleLayout->add(
-    std::make_shared<Label>(u8"Переключатель", 0, 0, 0, 0, font));
-    mainLayout->add(toggleLayout);
 
-      auto toggleOn = std::make_shared<ToggleSwitch>(0, 0, 50, 30, true);
-      toggleOn->onStateChange = [](bool isOn) {
-          SQUIDL_LOG_INFO << "Переключатель " << (isOn ? "включен" :
-      "выключен");
-      };
-      toggleLayout->add(toggleOn);
-      //toggleLayout->setBackgroundColor({22, 43, 56,170});
-      toggleLayout->setHorizontalAlign(Squidl::Core::HorizontalAlign::Left);
-
-      // --- End Test 4 ---
-
-      */
     // --- Test 2: Horizontal Box Layout ---
     auto hTestLayout = std::make_shared<HBoxLayout>();
-    hTestLayout->setBackgroundColor(Color(70, 70, 70, 200));
-    hTestLayout->setBorderColor(Color::Green());
+    hTestLayout->setBackgroundColor(Color(70, 70, 70, 5));
+    // hTestLayout->setBorderColor(Color::Green());
     hTestLayout->setPadding(10);
     hTestLayout->setSpacing(8);
     hTestLayout->setManagedByChilds(true);
@@ -186,7 +168,7 @@ int main() {
     auto gridTestLayout = std::make_shared<GridLayout>(
         3, 5, 8); // 3 columns, 5 spacing, 8 padding
     gridTestLayout->setRect({50, 50, 700, 200});
-    gridTestLayout->setBackgroundColor(Color(70, 70, 70, 200));
+    // gridTestLayout->setBackgroundColor(Color(70, 70, 70, 200));
     gridTestLayout->setBorderColor(Color::Red());
     gridTestLayout->setPadding(10);
     gridTestLayout->setSpacing(10);
@@ -212,6 +194,23 @@ int main() {
     SQUIDL_LOG_INFO << u8"gridLayout создан.";
     mainLayout->add(gridTestLayout);
 
+    // --- Test 4: Toggle Switch ---
+    auto toggleLayout = std::make_shared<HBoxLayout>();
+    toggleLayout->setManagedByChilds(true);
+    toggleLayout->add(
+        std::make_shared<Label>(u8"Переключатель", 0, 0, 0, 0, font));
+
+     auto toggleOn = std::make_shared<ToggleSwitch>(0, 0, 50, 30, true);
+     toggleOn->onStateChange = [](bool isOn) {
+         SQUIDL_LOG_INFO << "Переключатель " << (isOn ? "включен" : "выключен");
+     };
+    toggleLayout->add(toggleOn);
+    toggleLayout->setBackgroundColor(Color(30, 30, 30, 5));
+    toggleLayout->setHorizontalAlign(Squidl::Core::HorizontalAlign::Left);
+    mainLayout->add(toggleLayout);
+    // --- End Test 4 --- // */
+
+    //*/
     // Set initial size for main layout and trigger autosize for
     // all children
     mainLayout->autosize();

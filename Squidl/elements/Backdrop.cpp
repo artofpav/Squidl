@@ -7,7 +7,7 @@ namespace Squidl::Elements {
 
     Backdrop::Backdrop(SDL_Texture *tex) : texture(tex), ownsTexture(false) {
         // Default background color for backdrop
-        setBackgroundColor({100, 100, 100, 255});
+        setBackgroundColor({100, 100, 100, 50});
         setBorderColor({0, 0, 0, 255});
     }
 

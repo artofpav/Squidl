@@ -22,7 +22,7 @@ namespace Squidl::Elements {
         setFont(font);
         label->setHorizontalAlignment(Squidl::Core::HorizontalAlign::Center);
         label->setVerticalAlignment(Squidl::Core::VerticalAlign::Center);
-        setBackgroundColor(Squidl::Utils::Color(100, 100, 100, 255));
+        setBackgroundColor(Squidl::Utils::Color(100, 100, 100, 50));
         setBorderColor(Squidl::Utils::Color(0, 0, 0, 255));
     }
 
