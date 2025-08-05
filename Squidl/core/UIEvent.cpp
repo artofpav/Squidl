@@ -1,0 +1,2 @@
+namespace Squidl::Core {
+}

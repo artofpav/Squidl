@@ -1,0 +1,60 @@
+{
+    "configurations": [
+        {
+            "name": "Linux/macOS (GCC/Clang)",
+            "includePath": [
+                "${workspaceFolder}/**", // Включает все подпапки в рабочем пространстве
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/include/**", // Для Squidl.h и SquidlConfig.h
+                //"${workspaceFolder}/include/Squidl", // Для внутренних инклудов Squidl, типа Squidl/core/UIContext.h
+                //"${workspaceFolder}/include/Squidl/**",
+                // Пути к заголовкам SDL2. Адаптируй их под свою систему!
+                // Примеры для macOS Homebrew:
+                "/opt/homebrew/include/SDL2",
+                "/opt/homebrew/include/SDL2/**",
+                "/opt/homebrew/include/**",
+                "/opt/homebrew/include" // Для заголовков SDL_image.h, SDL_ttf.h
+                // Примеры для Linux (часто достаточно /usr/include/SDL2):
+                // "/usr/include/SDL2",
+                // "/usr/local/include",
+                // Если используешь vcpkg:
+                // "${vcpkgRoot}/include"
+            ],
+            "defines": [
+                "SQUIDL_EXPORTS" // Определяем этот макрос для IntelliSense, если ты собираешь DLL/Shared Lib на Windows,
+                                 // но он также не повредит и на других платформах для IntelliSense
+            ],
+            "compilerPath": "/usr/bin/clang", // Или "/usr/bin/g++" на Linux, или твой путь к clang/g++
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-clang-arm64" // Или "linux-gcc-x64", "macos-clang-x64" и т.д.
+        },
+        {
+            "name": "Windows (MSVC)",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/squidl",
+                // Пути к заголовкам SDL2 на Windows. ОБЯЗАТЕЛЬНО АДАПТИРУЙ ИХ!
+                // Пример:
+                "C:/Libraries/SDL2/include",
+                "C:/Libraries/SDL2_image/include",
+                "C:/Libraries/SDL2_ttf/include"
+                // Если используешь vcpkg:
+                // "${vcpkgRoot}/include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "SQUIDL_EXPORTS" // ОБЯЗАТЕЛЬНО для IntelliSense, если ты собираешь Squidl как DLL
+            ],
+            "windowsSdkVersion": "10.0.19041.0", // ОБЯЗАТЕЛЬНО укажи свою версию Windows SDK
+            "compilerPath": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.36.32532/bin/Hostx64/x64/cl.exe", // ОБЯЗАТЕЛЬНО укажи свой путь к cl.exe
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-msvc-x64"
+        }
+    ],
+    "version": 4
+}

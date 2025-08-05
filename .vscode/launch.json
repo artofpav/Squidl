@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch SquidlTestApp",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/SquidlTestApp",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false, // Если хотите встроеный терминал, поставьте false
+      "MIMode": "lldb",
+      "preLaunchTask": "build SquidlTestApp"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+# Build artifacts
+*.o
+*.obj
+*.exe
+*.dll
+*.lib
+*.so
+*.dylib
+*.a
+*.out
+*.app
+*.bin
+*.tmp
+*.log
+*.bak
+*.swp
+*.swo
+
+# CMake build directory
+/build/
+/Build/
+/cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+
+# Visual Studio
+.vs/
+*.VC.db
+*.VC.opendb
+*.VC.VC.opendb
+*.VC.VC.db
+*.VC.VC.sdf
+*.VC.sdf
+*.VC.suo
+*.VC.user
+*.VC.vcxproj.user
+*.VC.vcxproj.filters
+*.VC.vcxproj.user
+*.VC.vcxproj.user.tlog
+*.VC.vcxproj.user.filters
