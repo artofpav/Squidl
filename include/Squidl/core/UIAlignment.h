@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Squidl/SquidlConfig.h"
 
 namespace Squidl::Core {
@@ -24,6 +25,7 @@ namespace Squidl::Core {
             left = value;
             bottom = value;
             right = value;
+            return *this;
         };
 
         int pHeightSum(){return top + bottom;}

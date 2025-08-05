@@ -12,6 +12,8 @@
                 // Примеры для macOS Homebrew:
                 "/opt/homebrew/include/SDL2",
                 "/opt/homebrew/include/SDL2/**",
+                "/opt/homebrew/include/SDL",
+                "/opt/homebrew/include/SDL/**",
                 "/opt/homebrew/include/**",
                 "/opt/homebrew/include" // Для заголовков SDL_image.h, SDL_ttf.h
                 // Примеры для Linux (часто достаточно /usr/include/SDL2):

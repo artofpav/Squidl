@@ -53,11 +53,11 @@ namespace Squidl::Layouts {
 
             switch (getVerticalAlign()) {
             case Squidl::Core::VerticalAlign::Top:
-                childY = padding.Top + prevChildH + (index * spacing);
+                childY = padding.top + prevChildH + (index * spacing);
                 childH = size.h;
                 break;
             case Squidl::Core::VerticalAlign::Center:
-                childY = padding.Top + (availableHeight / 2) -
+                childY = padding.top + (availableHeight / 2) -
                          (allChildsHeight / 2) + (size.h * index) +
                          (index * spacing);
                 childH = size.h;
@@ -68,31 +68,31 @@ namespace Squidl::Layouts {
                 childH = size.h;
                 break;
             case Squidl::Core::VerticalAlign::Justify:
-                childY = padding + (size.h * index) + (index * extraSpacing);
+                childY = padding.top + (size.h * index) + (index * extraSpacing);
                 childH = size.h;
                 break;
             case Squidl::Core::VerticalAlign::Stretch:
-                childY = padding + index * (stretchedHeight + spacing);
+                childY = padding.top + index * (stretchedHeight + spacing);
                 childH = stretchedHeight;
                 break;
             }
 
             switch (getHorizontalAlign()) {
             case Squidl::Core::HorizontalAlign::Left:
-                childX = padding;
+                childX = padding.left;
                 childW = size.w;
                 break;
             case Squidl::Core::HorizontalAlign::Center:
-                childX = padding + (availableWidth / 2) - (size.w / 2);
+                childX = padding.left + (availableWidth / 2) - (size.w / 2);
                 childW = size.w;
                 break;
             case Squidl::Core::HorizontalAlign::Right:
-                childX = rect.w - padding - size.w;
+                childX = rect.w - padding.left - size.w;
                 childW = size.w;
                 break;
             case Squidl::Core::HorizontalAlign::Justify:
             case Squidl::Core::HorizontalAlign::Stretch:
-                childX = padding;
+                childX = padding.left;
                 childW = availableWidth;
                 break;
             }
@@ -142,7 +142,7 @@ namespace Squidl::Layouts {
     }
 
     void VBoxLayout::autosize() {
-        int totalHeight = padding;
+        int totalHeight = padding.top;
         int maxWidth = 0;
 
         for (auto &child : children) {
@@ -156,7 +156,7 @@ namespace Squidl::Layouts {
         if (!children.empty()) {
             totalHeight -= spacing; // убрать последний лишний spacing
         }
-        totalHeight += padding.top;
+        totalHeight += padding.bottom;
         if(managedByChilds)
             setRect({rect.x, rect.y, maxWidth, totalHeight + padding.top});
         else 
