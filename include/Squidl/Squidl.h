@@ -32,11 +32,12 @@
 // --- UI Elements ---
 #include "Squidl/elements/Backdrop.h"
 #include "Squidl/elements/Button.h"
+#include "Squidl/elements/Checkbox.h"
 #include "Squidl/elements/Input.h"
-#include "Squidl/elements/ToggleSwitch.h"
 #include "Squidl/elements/Label.h"
+#include "Squidl/elements/ToggleSwitch.h"
 // Add new elements here as you create them, e.g.:
-// #include "Squidl/elements/Checkbox.h"
+
 // #include "Squidl/elements/Slider.h"
 
 // --- Layouts ---

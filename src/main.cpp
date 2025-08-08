@@ -166,7 +166,7 @@ int main() {
 
     // --- Test 3: Grid Layout ---
     auto gridTestLayout = std::make_shared<GridLayout>(
-        3, 5, 8); // 3 columns, 5 spacing, 8 padding
+        3, 5, 5); // 3 columns, 5 spacing, 8 padding
     gridTestLayout->setRect({50, 50, 700, 200});
     // gridTestLayout->setBackgroundColor(Color(70, 70, 70, 200));
     gridTestLayout->setBorderColor(Color::Red());
@@ -200,13 +200,19 @@ int main() {
     toggleLayout->add(
         std::make_shared<Label>(u8"Переключатель", 0, 0, 0, 0, font));
 
-     auto toggleOn = std::make_shared<ToggleSwitch>(0, 0, 50, 30, true);
-     toggleOn->onStateChange = [](bool isOn) {
-         SQUIDL_LOG_INFO << "Переключатель " << (isOn ? "включен" : "выключен");
-     };
+    auto toggleOn = std::make_shared<ToggleSwitch>(0, 0, 50, 30, true);
+    toggleOn->onStateChange = [](bool isOn) {
+        SQUIDL_LOG_INFO << "Переключатель " << (isOn ? "включен" : "выключен");
+    };
+    auto checkbox =
+        std::make_shared<Checkbox>(u8"Checkbox", 0, 0, 20, false, font);
+    checkbox->setHorizontalAlign(Squidl::Core::HorizontalAlign::Left);
+    checkbox->setVerticalAlign(Squidl::Core::VerticalAlign::Center);
     toggleLayout->add(toggleOn);
+    toggleLayout->add(checkbox);
     toggleLayout->setBackgroundColor(Color(30, 30, 30, 5));
-    toggleLayout->setHorizontalAlign(Squidl::Core::HorizontalAlign::Left);
+    toggleLayout->setHorizontalAlign(Squidl::Core::HorizontalAlign::Stretch);
+    toggleLayout->setVerticalAlign(Squidl::Core::VerticalAlign::Center);
     mainLayout->add(toggleLayout);
     // --- End Test 4 --- // */
 

@@ -38,6 +38,8 @@ namespace Squidl::Elements {
         bool hovered = false;
         bool pressed = false;
         bool enabled = true;
+
+        Squidl::Utils::UIRect calcSwitchRect() const;
     };
 
 } // namespace Squidl::Elements

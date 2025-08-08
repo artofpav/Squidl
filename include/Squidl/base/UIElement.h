@@ -28,13 +28,10 @@ namespace Squidl::Base {
       public:
         virtual ~UIElement() = default;
 
-        // UIContext now qualified by Squidl::Core namespace
-        // Renderer now accepts IRenderer&
         virtual bool update(Squidl::Core::UIContext &ctx,
                             Squidl::Core::IRenderer &renderer) = 0;
 
-        // Changed return type and parameter type to Squidl::Utils::UIRect
-        virtual Squidl::Utils::UIRect getRect();
+        virtual Squidl::Utils::UIRect getRect() const { return rect; };
         virtual void setRect(const Squidl::Utils::UIRect &newRect);
 
         void setPosition(int x, int y) { position = {x, y}; }
@@ -150,6 +147,8 @@ namespace Squidl::Base {
         // ---------------- Paddings ------------------
         Squidl::Core::Padding padding = 5;
         Squidl::Core::Padding margin = 0;
+        void setPadding(int value) { padding = value; }
+        Squidl::Core::Padding getPadding() const { return padding; }
 
       protected:
         // Renderer now accepts IRenderer&

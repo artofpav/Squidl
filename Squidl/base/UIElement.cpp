@@ -4,11 +4,6 @@
 
 namespace Squidl::Base {
 
-    Squidl::Utils::UIRect UIElement::getRect() {
-        // If managed by layout, its rect is already updated by the layout.
-        // Otherwise, it's its own rect.
-        return rect;
-    }
 
     void UIElement::setRect(const Squidl::Utils::UIRect &newRect) {
         rect = newRect;

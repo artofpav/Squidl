@@ -17,14 +17,7 @@ namespace Squidl::Layouts {
 
         void autosize() override;
 
-        void setPadding(int value) { padding = value; }
-        int getPadding() const { return padding; }
-        void setSpacing(int value) { spacing = value; }
-        int getSpacing() const { return spacing; }
-
       private:
-        int spacing = 5;
-        int padding = 10;
 
         void updateBackdrop(Squidl::Core::UIContext &ctx,
                             Squidl::Core::IRenderer &renderer) override;

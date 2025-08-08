@@ -12,6 +12,14 @@
 namespace Squidl::Layouts {
     SQUIDL_API class Layout : public Squidl::Base::UIElement {
       public:
+      
+        void setChildAlignmentOverride(
+            std::optional<Squidl::Core::HorizontalAlign> hx,
+            std::optional<Squidl::Core::VerticalAlign> vy) {
+            childHXOverride = hx;
+            childVYOverride = vy;
+        }
+
         virtual ~Layout() = default;
 
         // Add element to internal list
@@ -30,6 +38,8 @@ namespace Squidl::Layouts {
         getChildren() const {
             return children;
         }
+        void setSpacing(int value) { spacing = value; }
+        int getSpacing() const { return spacing; }
 
       protected:
         std::vector<std::shared_ptr<Squidl::Base::UIElement>> children;
@@ -37,5 +47,63 @@ namespace Squidl::Layouts {
                             Squidl::Core::IRenderer &renderer) override;
 
         int spacing = 1;
+
+        static Squidl::Utils::UIRect
+        alignInSlot(const Squidl::Utils::UIRect &slot,
+                    const Squidl::Utils::UIRect
+                        &desired, // размер ребёнка до выравнивания
+                    Squidl::Core::HorizontalAlign hx,
+                    Squidl::Core::VerticalAlign vy) {
+            using namespace Squidl::Utils;
+            UIRect r = desired;
+
+            // Горизонталь
+            switch (hx) {
+            case Squidl::Core::HorizontalAlign::Left:
+                r.x = slot.x;
+                r.w = desired.w;
+                break;
+            case Squidl::Core::HorizontalAlign::Center:
+                r.x = slot.x + (slot.w - desired.w) / 2;
+                r.w = desired.w;
+                break;
+            case Squidl::Core::HorizontalAlign::Right:
+                r.x = slot.x + slot.w - desired.w;
+                r.w = desired.w;
+                break;
+            case Squidl::Core::HorizontalAlign::Stretch:
+            case Squidl::Core::HorizontalAlign::Justify:
+                r.x = slot.x;
+                r.w = slot.w;
+                break;
+            }
+
+            // Вертикаль
+            switch (vy) {
+            case Squidl::Core::VerticalAlign::Top:
+                r.y = slot.y;
+                r.h = desired.h;
+                break;
+            case Squidl::Core::VerticalAlign::Center:
+                r.y = slot.y + (slot.h - desired.h) / 2;
+                r.h = desired.h;
+                break;
+            case Squidl::Core::VerticalAlign::Bottom:
+                r.y = slot.y + slot.h - desired.h;
+                r.h = desired.h;
+                break;
+            case Squidl::Core::VerticalAlign::Stretch:
+            case Squidl::Core::VerticalAlign::Justify:
+                r.y = slot.y;
+                r.h = slot.h;
+                break;
+            }
+            return r;
+        }
+
+        // Опциональные оверрайды на уровне лэйаута (по умолчанию — не заданы)
+        std::optional<Squidl::Core::HorizontalAlign> childHXOverride;
+        std::optional<Squidl::Core::VerticalAlign> childVYOverride;
+
     };
 } // namespace Squidl::Layouts

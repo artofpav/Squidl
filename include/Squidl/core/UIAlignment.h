@@ -29,7 +29,7 @@ namespace Squidl::Core {
         };
 
         int pHeightSum(){return top + bottom;}
-        int pWeightSum(){return left + right;}
+        int pWidthSum() { return left + right; }
     };
 
     enum SQUIDL_API class HorizontalAlign {

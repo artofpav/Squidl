@@ -1,197 +1,146 @@
+// HBoxLayout.cpp
 #include "Squidl/layouts/HBoxLayout.h"
-#include "Squidl/core/UIAlignment.h"
 #include "Squidl/elements/Backdrop.h"
-#include "Squidl/utils/Logger.h"
-#include <iostream>
+
+using namespace Squidl;
 
 namespace Squidl::Layouts {
-    HBoxLayout::HBoxLayout(int spacing_) : spacing(spacing_) {
-        rect = {0, 0, 0, 0};
-    }
 
-    void HBoxLayout::setRect(const Squidl::Utils::UIRect &newRect) {
+    HBoxLayout::HBoxLayout(int spacing_) { spacing = spacing_; }
+
+    void HBoxLayout::setRect(const Utils::UIRect &newRect) {
         rect = newRect;
-        int availableWidth = rect.w - 2 * padding;
-        int availableHeight = rect.h - 2 * padding;
-        int maxChildWidth = (availableWidth - spacing*(children.size()-1)) / children.size();
 
-        int childX = padding;
-        int childY = padding;
-        int childW = availableWidth;
-        int childH = availableHeight;
-        int index;
-        int allChildsHeight = 0;
-        int allChildsWidth = 0;
-        int prevChildW = 0;
+        const int availW = rect.w - padding.pWidthSum();
+        const int availH = rect.h - padding.pHeightSum();
 
-        for (auto &child : children) {
-            child->autosize();
-            allChildsHeight += child->getRect().h;
-            allChildsWidth += child->getRect().w;
+        // Считаем суммарные горизонтальные margin управляемых детей
+        int totalHorzMargins = 0, managedCount = 0;
+        for (auto &ch : children)
+            if (ch->isManagedByLayout()) {
+                totalHorzMargins += ch->margin.left + ch->margin.right;
+                managedCount++;
+            }
+        const int gaps = std::max(0, (int)children.size() - 1);
+
+        int stretchSlotW = 0;
+        if (getHorizontalAlign() == Core::HorizontalAlign::Stretch &&
+            managedCount > 0) {
+            const int widthForChildren =
+                availW - totalHorzMargins - gaps * spacing;
+            stretchSlotW = std::max(0, widthForChildren / managedCount);
         }
 
-        int stretchedWidth =
-            (children.size() > 1)
-                ? (rect.w - 2 * padding - (children.size() - 1) * spacing) /
-                      children.size()
-                : 0;
+        // Начальный X по верт. выравниванию не влияет; Y зависит от
+        // VerticalAlign
+        int childX = rect.x + padding.left;
 
-        int extraSpacing =
-            (children.size() > 1)
-                ? (availableWidth - allChildsWidth) / (children.size() - 1)
-                : 0;
+        for (auto &ch : children) {
+            if (!ch->isManagedByLayout())
+                continue;
 
-        for (auto &child : children) {
-            Squidl::Utils::UIRect size = child->getRect();
-            index = child->index;
-            if (index - 1 >= 0) {
-                prevChildW += children[index - 1]->getRect().w;
-            }
+            auto c = ch->getRect();
+            int cw = (getHorizontalAlign() == Core::HorizontalAlign::Stretch)
+                         ? stretchSlotW
+                         : c.w;
+            cw = std::max(0, cw);
 
-            // --- Horizontal placement ---
-            switch (getHorizontalAlign()) {
-            case Squidl::Core::HorizontalAlign::Left:
-                childX = padding + prevChildW + (index * spacing);
-                childW = size.w;
-                break;
-            case Squidl::Core::HorizontalAlign::Center:
-                childX = padding + (availableWidth / 2) - (allChildsWidth / 2) +
-                         (size.w * index) + (index * spacing);
-                childW = size.w;
-                break;
-            case Squidl::Core::HorizontalAlign::Right:
-                // Original calculation might be off for Right alignment if not
-                // managed by children This logic needs to align relative to the
-                // *layout's* available width if not autosizing
-                if (isManagedByChilds()) {
-                    childX = availableWidth - allChildsWidth + prevChildW +
-                             (index * spacing) - spacing;
-                } else {
-                    // If not managed by children, we need to respect the fixed
-                    // width of the layout and distribute children within it.
-                    // This is a simplified example.
-                    childX = rect.w - padding - allChildsWidth + prevChildW +
-                             (index * spacing) - spacing;
-                }
-                childW = size.w;
-                break;
-            case Squidl::Core::HorizontalAlign::Justify:
-                childX = padding + prevChildW + (index * extraSpacing);
-                childW = size.w;
-                break;
-            case Squidl::Core::HorizontalAlign::Stretch:
-                childX = padding + index * (stretchedWidth + spacing);
-                childW = stretchedWidth;
-                break;
-            }
+            // Высота
+            int chH = (getVerticalAlign() == Core::VerticalAlign::Stretch)
+                          ? availH - (ch->margin.top + ch->margin.bottom)
+                          : c.h;
 
-            // --- Vertical alignment ---
+            int cx = childX + ch->margin.left;
+            int cy = rect.y + padding.top; // базовая точка
+
             switch (getVerticalAlign()) {
-            case Squidl::Core::VerticalAlign::Top:
-                childY = padding;
-                childH = size.h;
+            case Core::VerticalAlign::Top:
+                cy += ch->margin.top;
                 break;
-            case Squidl::Core::VerticalAlign::Center:
-                childY = padding + (availableHeight / 2) - (size.h / 2);
-                childH = size.h;
+            case Core::VerticalAlign::Center:
+                cy += (availH - chH) / 2;
                 break;
-            case Squidl::Core::VerticalAlign::Bottom:
-                childY = rect.h - padding - size.h;
-                childH = size.h;
+            case Core::VerticalAlign::Bottom:
+                cy += availH - chH - ch->margin.bottom;
                 break;
-            case Squidl::Core::VerticalAlign::Justify:
-            case Squidl::Core::VerticalAlign::Stretch:
-                childY = padding;
-                childH = availableHeight;
+            case Core::VerticalAlign::Stretch:
+            case Core::VerticalAlign::Justify:
+                // Stretch: уже растянули chH
                 break;
             }
+            
+            // внутри цикла по children, после вычисления cw/chH и cx/cy:
+            Squidl::Utils::UIRect slot = {
+                cx, rect.y + padding.top, std::max(0, cw),
+                std::max(0, (rect.h - padding.pHeightSum()))};
+            // "желаемый" размер ребёнка до выравнивания (его autosize/rect.h)
+            Squidl::Utils::UIRect desired = {0, 0, c.w, chH};
 
-            child->setPosition(childX, childY);
+            // выберем выравнивание: override от лэйаута ИЛИ per-child
+            auto useHX = childHXOverride.value_or(ch->getHorizontalAlign()); //
+            auto useVY = childVYOverride.value_or(ch->getVerticalAlign());   //
 
-           // if (childW >= maxChildWidth)
-                //childW = maxChildWidth;
+            // финальный прямоугольник
+            auto finalRect = alignInSlot(slot, desired, useHX, useVY);
 
-
-            child->setRect({childX + rect.x, childY + rect.y, childW, childH});
+            // учесть margin (мы строили slot уже с учётом margin.left/right в
+            // твоём коде; если нет — вычти тут)
+            ch->setRect(finalRect);
+            ch->setRect({cx, cy, cw, chH});
+            childX += cw + ch->margin.left + ch->margin.right + spacing;
         }
-
-        applyConstraints();
     }
 
-    bool HBoxLayout::update(Squidl::Core::UIContext &ctx,
-                            Squidl::Core::IRenderer &renderer) {
+    bool HBoxLayout::update(Core::UIContext &ctx, Core::IRenderer &renderer) {
         if (backdrop) {
             updateBackdrop(ctx, renderer);
         } else {
-            Squidl::Utils::Color currentBgColor = getBackgroundColor();
-            currentBgColor.a =
-                static_cast<Uint8>(currentBgColor.a * getOpacity());
-            renderer.drawFilledRect(rect, bgColor);
+            auto col = getBackgroundColor();
+            col.a = (Uint8)(col.a * getOpacity());
+            renderer.drawFilledRect(rect, col);
 
-            if (!isBorderless() && getBorderOpacity() > 0.0f) {
-                Squidl::Utils::Color borderCol =
-                    getBorderColor(); // <--- Now returns Color
-                borderCol.a = static_cast<Uint8>(
-                    borderCol.a * getBorderOpacity()); // Apply border opacity
-                renderer.drawOutlineRect(rect, borderCol);
+            if (!isBorderless() && getBorderOpacity() > 0.f) {
+                auto bc = getBorderColor();
+                bc.a = (Uint8)(bc.a * getBorderOpacity());
+                renderer.drawOutlineRect(rect, bc);
             }
         }
-
-        bool anyActivated = false;
-        for (auto &child : children) {
-            anyActivated |= child->update(ctx, renderer);
-        }
-        return anyActivated;
+        bool any = false;
+        for (auto &ch : children)
+            any |= ch->update(ctx, renderer);
+        return any;
     }
 
-    void HBoxLayout::updateBackdrop(Squidl::Core::UIContext &ctx,
-                                    Squidl::Core::IRenderer &renderer) {
-        if (backdrop) {
-
-            backdrop->setRect(rect);
-            ///
-            std::cout << "Backdrop position: " << backdrop->getRect().x << ", "
-                      << backdrop->getRect().y << std::endl;
-
-            backdrop->setOpacity(opacity);
-            backdrop->update(ctx, renderer);
-        }
+    void HBoxLayout::updateBackdrop(Core::UIContext &ctx,
+                                    Core::IRenderer &renderer) {
+        if (!backdrop)
+            return;
+        backdrop->setRect(rect);
+        backdrop->setOpacity(opacity);
+        backdrop->update(ctx, renderer);
     }
 
     void HBoxLayout::autosize() {
-        if (!isManagedByChilds()) {
-            // If not managed by children, autosize should not change layout's
-            // own dimensions significantly It should still call autosize on
-            // children, but the layout's rect remains fixed.
-            int maxChildH = 0;
-            for (auto &child : children) {
-                child->autosize();
-                maxChildH = std::max(maxChildH, child->getRect().h);
-            }
-            rect.h = maxChildH + padding * 2;
-            setRect(rect);
+        if (!managedByChilds) {
             applyConstraints();
             return;
         }
 
-        int totalWidth = padding;
-        int maxHeight = 0;
-
-        for (auto &child : children) {
-            child->autosize();
-            SDL_Rect c = child->getRect();
-            totalWidth += c.w + spacing;
-            if (c.h > maxHeight)
-                maxHeight = c.h;
+        // ширина = сумма детей + margins + spacing + padding
+        int totalW = padding.pWidthSum();
+        int maxH = 0;
+        int i = 0;
+        for (auto &ch : children) {
+            ch->autosize();
+            auto c = ch->getRect();
+            totalW += c.w + ch->margin.left + ch->margin.right;
+            if (i++ < (int)children.size() - 1)
+                totalW += spacing;
+            maxH = std::max(maxH, c.h + ch->margin.top + ch->margin.bottom);
         }
-
-        if (!children.empty()) {
-            totalWidth -= spacing;
-        }
-
-        totalWidth += padding;
-        setRect({rect.x, rect.y, totalWidth, maxHeight + 2 * padding});
-
+        const int totalH = maxH + padding.pHeightSum();
+        setRect({rect.x, rect.y, totalW, totalH});
         applyConstraints();
     }
+
 } // namespace Squidl::Layouts

@@ -56,6 +56,11 @@ namespace Squidl::Core {
         virtual void clearScreen(Squidl::Utils::Color color) = 0;
 
         /**
+        * @brief Draw line 
+         */
+        virtual void drawLine(int x1, int y1, int x2, int y2, Squidl::Utils::Color color) = 0;
+
+        /**
          * @brief Draws a filled rectangle.
          *
          * @param rect The rectangle to draw.
@@ -75,8 +80,9 @@ namespace Squidl::Core {
                                      int radius,
                                      Squidl::Utils::Color color) = 0;
 
-        virtual void drawRoundedRect(const Squidl::Utils::UIRect &rect, int radius,
-                             Squidl::Utils::Color color) = 0;
+        virtual void drawRoundedRect(const Squidl::Utils::UIRect &rect,
+                                     int radius,
+                                     Squidl::Utils::Color color) = 0;
         /**
          * @brief Draws an outlined rectangle.
          *

@@ -50,6 +50,15 @@ namespace Squidl::Renderers {
         }
     }
 
+    void SDL2Renderer::drawLine(int x1, int y1, int x2, int y2,
+                                Squidl::Utils::Color color) {
+        SDL_SetRenderDrawColor(m_sdlRenderer, color.r, color.g, color.b,
+                               color.a);
+        
+        SDL_RenderDrawLine(m_sdlRenderer, x1, y1, x2, y2);
+        // SDL_RenderDrawLineF();
+    }
+
     void SDL2Renderer::drawFilledRect(const Squidl::Utils::UIRect &rect,
                                       Squidl::Utils::Color color) {
         if (m_sdlRenderer) {
@@ -67,15 +76,16 @@ namespace Squidl::Renderers {
                            rect.y + rect.h - 1, radius, color.r, color.g,
                            color.b, color.a);
         }
-        
     }
 
     void SDL2Renderer::drawRoundedRect(const Squidl::Utils::UIRect &rect,
                                        int radius, Squidl::Utils::Color color) {
+        SDL_SetRenderDrawColor(m_sdlRenderer, color.r, color.g, color.b,
+                               color.a);
         if (m_sdlRenderer) {
-            roundedRectangleRGBA(m_sdlRenderer, rect.x, rect.y, rect.x + rect.w - 1,
-                           rect.y + rect.h - 1, radius, color.r, color.g,
-                           color.b, color.a);
+            roundedRectangleRGBA(m_sdlRenderer, rect.x, rect.y,
+                                 rect.x + rect.w - 1, rect.y + rect.h - 1,
+                                 radius, color.r, color.g, color.b, color.a);
         }
     }
 
